@@ -13,7 +13,10 @@ export default function Home() {
     const supportResponses: string[] = [
         "Did you try turning it off and on again?",
         "Did you delete your node_modules and re-install?",
-        "Did you update your env?",
+        "Did you update your environment variables?",
+        "Did you ask Jeremy?",
+        "Did you try Googling it?",
+        "Did you try doing what the error message says?",
     ];
 
     const handleSubmit = (e: React.FormEvent) => {
