@@ -1,101 +1,103 @@
-import Image from "next/image";
+'use client';
+import { useState } from "react";
+
+type Message = {
+    text: string;
+    sender: "user" | "bot";
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [inputValue, setInputValue] = useState<string>("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    const supportResponses: string[] = [
+        "Did you try turning it off and on again?",
+        "Did you delete your node_modules and re-install?",
+        "Did you update your env?",
+    ];
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (inputValue.trim() === "") return;
+
+        // Add user message
+        const newMessages: Message[] = [
+            ...messages,
+            { text: inputValue, sender: "user" },
+        ];
+
+        // Generate random bot response
+        const randomIndex: number = Math.floor(
+            Math.random() * supportResponses.length
+        );
+        const botResponse: string = supportResponses[randomIndex];
+
+        // Add bot message with slight delay to feel more natural
+        setTimeout(() => {
+            setMessages([...newMessages, { text: botResponse, sender: "bot" }]);
+        }, 500);
+
+        setInputValue("");
+    };
+
+    return (
+        <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-white text-black">
+            <h1 className="text-3xl font-bold mb-8 text-center">
+                Tech Support Chat Bot
+            </h1>
+            <div className="flex flex-col h-[500px] w-full max-w-md mx-auto border rounded-lg overflow-hidden">
+                <div className="bg-blue-600 text-white p-4">
+                    <h2 className="text-xl font-bold">Tech Support Bot</h2>
+                </div>
+
+                <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
+                    {messages.length === 0 ? (
+                        <div className="text-center text-gray-500 mt-4">
+                            Ask me any tech question!
+                        </div>
+                    ) : (
+                        messages.map((message, index) => (
+                            <div
+                                key={index}
+                                className={`mb-4 ${message.sender === "user" ? "text-right" : "text-left"
+                                    }`}
+                            >
+                                <div
+                                    className={`inline-block p-3 rounded-lg ${message.sender === "user"
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-gray-200 text-gray-800"
+                                        }`}
+                                >
+                                    {message.text}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                <form onSubmit={handleSubmit} className="border-t p-4 bg-white">
+                    <div className="flex">
+                        <input
+                            type="text"
+                            value={inputValue}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setInputValue(e.target.value)
+                            }
+                            placeholder="Type your message..."
+                            className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition"
+                        >
+                            Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <p className="mt-8 text-sm text-gray-500 text-center">
+                No matter what you ask, this bot knows exactly what to suggest!
+            </p>
+        </main>);
 }
